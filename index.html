@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>As Aventuras do Alegrinho</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg viewBox='0 0 64 64'%3E%3Crect x='12' y='6' width='40' height='52' rx='7' fill='white' stroke='%232f8cff' stroke-width='5'/%3E%3Crect x='17' y='16' width='30' height='9' rx='4' fill='%23ff4b5c'/%3E%3Crect x='17' y='40' width='30' height='8' rx='4' fill='%232f8cff'/%3E%3Cpath d='M22 33q10 10 20 0' fill='none' stroke='%2326344d' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="app" class="app-shell">
+    <section id="screenHome" class="screen active home-screen" aria-label="Tela inicial">
+      <div class="hero-scene" aria-hidden="true">
+        <div class="shelf shelf-one"></div>
+        <div class="shelf shelf-two"></div>
+        <div class="mini-pack"></div>
+        <div class="sugar-path"></div>
+      </div>
+      <div class="screen-content home-content">
+        <p class="brand-line">Açúcar Alegre apresenta</p>
+        <h1>As Aventuras do Alegrinho</h1>
+        <p class="subtitle">Uma jornada doce pela alegria!</p>
+        <div class="button-stack">
+          <button class="primary-btn xl" id="btnPlay">Jogar</button>
+          <button class="secondary-btn" id="btnHowTo">Como Jogar</button>
+          <button class="secondary-btn" id="btnSkinsHome">Skins</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="screenHowTo" class="screen panel-screen" aria-label="Como jogar">
+      <div class="screen-content readable">
+        <h2>Como Jogar</h2>
+        <p>Ajude o Alegrinho a atravessar cenários cheios de aventura, coletar Sorrisos de Açúcar, desbloquear skins e chegar até a grande festa de aniversário!</p>
+        <div class="info-grid">
+          <article>
+            <h3>Teclado</h3>
+            <p>Setas ou A/D movem o Alegrinho. Espaço ou W pula. Shift ou seta para cima no ar faz planar. E usa a habilidade especial da fase. P ou ESC pausa.</p>
+          </article>
+          <article>
+            <h3>Celular</h3>
+            <p>Use os botões virtuais de esquerda, direita, pular, planar e habilidade. Eles aparecem durante a fase.</p>
+          </article>
+          <article>
+            <h3>Poder Doce</h3>
+            <p>A cada 100 Sorrisos de Açúcar, uma capa de algodão-doce aparece por alguns segundos e protege o Alegrinho contra água.</p>
+          </article>
+        </div>
+        <button class="secondary-btn back-home">Voltar</button>
+      </div>
+    </section>
+
+    <section id="screenLevels" class="screen panel-screen" aria-label="Seleção de fases">
+      <div class="screen-content wide">
+        <div class="section-heading">
+          <div>
+            <p class="brand-line">Escolha sua aventura</p>
+            <h2>Fases</h2>
+          </div>
+          <div class="heading-actions">
+            <button class="primary-btn compact" id="btnQuickStart">Jogar fase atual</button>
+            <button class="secondary-btn compact back-home">Menu</button>
+          </div>
+        </div>
+        <div id="levelGrid" class="level-grid"></div>
+      </div>
+    </section>
+
+    <section id="screenSkins" class="screen panel-screen" aria-label="Skins">
+      <div class="screen-content wide">
+        <div class="section-heading">
+          <div>
+            <p class="brand-line">Estilo da sessão</p>
+            <h2>Skins do Alegrinho</h2>
+          </div>
+          <button class="secondary-btn compact back-home">Menu</button>
+        </div>
+        <div id="skinGrid" class="skin-grid"></div>
+      </div>
+    </section>
+
+    <section id="screenGame" class="screen game-screen" aria-label="Jogo">
+      <div class="game-wrap">
+        <div id="hud" class="hud">
+          <div class="hud-card energy-card">
+            <span class="hud-label">Energia Doce</span>
+            <span id="hudEnergy" class="energy-hearts"></span>
+          </div>
+          <div class="hud-card">
+            <span class="hud-label">Sorrisos de Açúcar</span>
+            <strong id="hudSmiles">0</strong>
+          </div>
+          <div class="hud-card level-card">
+            <span class="hud-label">Fase</span>
+            <strong id="hudLevel">1</strong>
+          </div>
+          <div class="hud-card">
+            <span class="hud-label">Skin</span>
+            <strong id="hudSkin">Clássica</strong>
+          </div>
+          <div class="hud-card power-card">
+            <span class="hud-label">Algodão-doce</span>
+            <div class="power-track"><span id="hudPower"></span></div>
+          </div>
+          <button id="btnPause" class="icon-btn" aria-label="Pausar">II</button>
+        </div>
+        <div id="bossHud" class="boss-hud" hidden>
+          <span id="bossName">Chefe</span>
+          <div class="boss-track"><span id="bossLife"></span></div>
+        </div>
+        <canvas id="gameCanvas" width="960" height="540" aria-label="Canvas do jogo"></canvas>
+        <div id="mobileControls" class="mobile-controls" aria-label="Controles de toque">
+          <div class="move-pad">
+            <button data-control="left" aria-label="Mover para esquerda">‹</button>
+            <button data-control="right" aria-label="Mover para direita">›</button>
+          </div>
+          <div class="action-pad">
+            <button data-control="glide" aria-label="Planar">Planar</button>
+            <button data-control="jump" aria-label="Pular">Pular</button>
+            <button data-control="ability" aria-label="Habilidade">E</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screenPause" class="overlay-screen" aria-label="Pausa" hidden>
+      <div class="modal-card">
+        <h2>Pausa</h2>
+        <button class="primary-btn" id="btnResume">Continuar</button>
+        <button class="secondary-btn" id="btnRestartPause">Reiniciar fase</button>
+        <button class="secondary-btn" id="btnMenuPause">Voltar ao menu</button>
+      </div>
+    </section>
+
+    <section id="screenLevelComplete" class="overlay-screen" aria-label="Vitória da fase" hidden>
+      <div class="modal-card celebration">
+        <p class="brand-line">Fase concluída</p>
+        <h2>Doçura espalhada!</h2>
+        <div id="winStars" class="star-row"></div>
+        <p id="winSmiles"></p>
+        <p id="winSkin"></p>
+        <div class="modal-actions">
+          <button class="primary-btn" id="btnNextLevel">Próxima fase</button>
+          <button class="secondary-btn" id="btnLevelsWin">Fases</button>
+          <button class="secondary-btn" id="btnSkinsWin">Skins</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="screenGameOver" class="overlay-screen" aria-label="Game over" hidden>
+      <div class="modal-card">
+        <p class="brand-line">Respira, Alegrinho</p>
+        <h2>Tente novamente!</h2>
+        <p>Tente novamente, Alegrinho ainda tem muita doçura pra espalhar!</p>
+        <button class="primary-btn" id="btnRetry">Tentar novamente</button>
+        <button class="secondary-btn" id="btnGameOverMenu">Voltar às fases</button>
+      </div>
+    </section>
+
+    <section id="screenFinal" class="screen final-screen" aria-label="Vitória final">
+      <div class="screen-content final-content">
+        <div class="cake-stage" aria-hidden="true">
+          <div class="cake-tier tier-three"></div>
+          <div class="cake-tier tier-two"></div>
+          <div class="cake-tier tier-one"></div>
+          <div class="final-pack"></div>
+        </div>
+        <h2>A alegria ficou ainda mais doce!</h2>
+        <p>Créditos fictícios: Alegrinho, Açúcar Alegre, Usina Monte Alegre e todas as crianças que transformam festa em união.</p>
+        <div class="button-stack horizontal">
+          <button class="primary-btn" id="btnPlayAgain">Jogar Novamente</button>
+          <button class="secondary-btn" id="btnFinalSkins">Skins</button>
+        </div>
+      </div>
+    </section>
+
+    <div id="transition" class="transition-layer" hidden>
+      <span id="transitionText">Carregando doçura...</span>
+    </div>
+  </main>
+  <script src="script.js" defer></script>
+</body>
+</html>
